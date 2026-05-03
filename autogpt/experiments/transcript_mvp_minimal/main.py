@@ -2,25 +2,37 @@
 # Purpose: proof-of-concept for YouTube transcript fetching.
 # This script is isolated and does not touch any AutoGPT core files.
 #
-# Note: Uses Supadata API (hardcoded key) for demo purposes only.
-# YouTube blocks direct transcript requests from most server/local IPs.
-# Production implementation will use proper credential management.
+# Requires a free Supadata API key: https://supadata.ai (100 requests/month, no credit card)
+# Set environment variable before running:
+#   Windows:  set SUPADATA_API_KEY=your_key_here
+#   Mac/Linux: export SUPADATA_API_KEY=your_key_here
 #
 # Dependency: pip install requests
 # Run: python autogpt/experiments/transcript_mvp_minimal/main.py
 
+import os
 import re
 import sys
 import requests
 
-# Demo API key for MVP testing only — not for production use.
-# Get a free key at https://supadata.ai (100 requests/month, no credit card)
-SUPADATA_API_KEY = "sd_c5133ff7df29f63070a3e5d90703a096"
-SUPADATA_ENDPOINT = "https://api.supadata.ai/v1/transcript"
-
 # Ensure UTF-8 output on all platforms (including Windows terminals)
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+SUPADATA_ENDPOINT = "https://api.supadata.ai/v1/transcript"
+
+
+def get_api_key() -> str:
+    key = os.environ.get("SUPADATA_API_KEY", "").strip()
+    if not key:
+        print("Error: SUPADATA_API_KEY environment variable is not set.")
+        print("Get a free key at https://supadata.ai (100 requests/month, no credit card)")
+        print("")
+        print("Then set it:")
+        print("  Windows:   set SUPADATA_API_KEY=your_key_here")
+        print("  Mac/Linux: export SUPADATA_API_KEY=your_key_here")
+        sys.exit(1)
+    return key
 
 
 def extract_video_id(url: str) -> str:
@@ -36,13 +48,13 @@ def extract_video_id(url: str) -> str:
     raise ValueError(f"Could not extract video ID from: {url}")
 
 
-def fetch_transcript(video_id: str) -> str:
+def fetch_transcript(video_id: str, api_key: str) -> str:
     """Fetch transcript via Supadata API and return as plain text."""
     url = f"https://www.youtube.com/watch?v={video_id}"
     response = requests.get(
         SUPADATA_ENDPOINT,
         params={"url": url, "text": "true", "lang": "en"},
-        headers={"x-api-key": SUPADATA_API_KEY},
+        headers={"x-api-key": api_key},
         timeout=15,
     )
     if not response.ok:
@@ -51,6 +63,7 @@ def fetch_transcript(video_id: str) -> str:
 
 
 def main():
+    api_key = get_api_key()
     url = input("Enter YouTube URL: ").strip()
 
     print("Extracting video ID...")
@@ -59,7 +72,7 @@ def main():
 
     print("Fetching transcript...")
     try:
-        transcript = fetch_transcript(video_id)
+        transcript = fetch_transcript(video_id, api_key)
     except Exception as e:
         print(f"Error: {e}")
         return

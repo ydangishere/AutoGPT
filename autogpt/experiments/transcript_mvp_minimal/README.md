@@ -17,20 +17,35 @@ and similar libraries in non-browser environments.
 [Supadata](https://supadata.ai) is a dedicated API that reliably fetches YouTube
 transcripts from any environment — no proxy, no cookies, no browser required.
 
-**The API key in this file is a demo key for MVP testing only.**
-It is not hardcoded in production. The full block (`youtube_summarizer.py`) exposes
-the key as a user-configurable field with clear setup instructions.
-
 ## How to run
 
-**Option 1 — Already have the AutoGPT repo:**
+**Step 1 — Get a free Supadata API key:**
+
+Go to [supadata.ai](https://supadata.ai) → Sign up free → Copy your API key.
+100 requests/month, no credit card required.
+
+**Step 2 — Set the environment variable:**
+
+Windows:
+```
+set SUPADATA_API_KEY=your_key_here
+```
+
+Mac/Linux:
+```
+export SUPADATA_API_KEY=your_key_here
+```
+
+**Step 3 — Clone and run:**
+
+Option A — Already have the AutoGPT repo:
 ```bash
 git checkout feature/transcript-mvp-minimal
 pip install requests
 python autogpt/experiments/transcript_mvp_minimal/main.py
 ```
 
-**Option 2 — Clone this branch only (no need to clone the full repo):**
+Option B — Clone this branch only:
 ```bash
 git clone --single-branch --branch feature/transcript-mvp-minimal https://github.com/ydangishere/AutoGPT.git
 cd AutoGPT
@@ -45,7 +60,6 @@ Enter any public YouTube URL when prompted. The script prints the transcript tex
 - Not production code
 - Not integrated into the AutoGPT block system
 - Not a final implementation
-- The hardcoded API key is for demo only — production uses proper credential management
 
 ## Next step
 

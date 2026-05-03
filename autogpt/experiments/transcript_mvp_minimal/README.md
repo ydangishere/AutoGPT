@@ -23,7 +23,17 @@ the key as a user-configurable field with clear setup instructions.
 
 ## How to run
 
+**Option 1 — Already have the AutoGPT repo:**
 ```bash
+git checkout feature/transcript-mvp-minimal
+pip install requests
+python autogpt/experiments/transcript_mvp_minimal/main.py
+```
+
+**Option 2 — Clone this branch only (no need to clone the full repo):**
+```bash
+git clone --single-branch --branch feature/transcript-mvp-minimal https://github.com/ydangishere/AutoGPT.git
+cd AutoGPT
 pip install requests
 python autogpt/experiments/transcript_mvp_minimal/main.py
 ```
